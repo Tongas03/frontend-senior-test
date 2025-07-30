@@ -1,4 +1,4 @@
-# 💼 WayniWallet – Frontend Technical Challenge
+# 💼 Wallet – Frontend Technical Challenge
 
 Este repositorio contiene el desarrollo de una **Wallet Digital**, construida con **Next.js**, **TypeScript** y otras tecnologías modernas de frontend. El objetivo es replicar el diseño provisto en Figma y simular funcionalidades básicas de transferencias entre usuarios.
 
