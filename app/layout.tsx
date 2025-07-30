@@ -3,7 +3,7 @@ import { Toaster } from 'react-hot-toast'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'WayniWallet',
+  title: 'Wallet',
   description: 'Wallet técnica con Next.js',
 }
 

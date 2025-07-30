@@ -5,6 +5,6 @@ toast.success('Transferencia realizada con éxito')
 
 export default function Home() {
   return (
-    <div>WayniWallet</div>
+    <div>Wallet</div>
   );
 }
