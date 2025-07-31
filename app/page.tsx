@@ -1,6 +1,6 @@
 "use client";
 import toast from "react-hot-toast";
-import { useFetchUsers } from '@/hooks'
+import { useUserFromDB } from '@/hooks'
 
 import {AppLayout, HomeWrapper, FooterNav} from '@/components'
 // import UserHeader from '@/components/home/UserHeader'
@@ -10,13 +10,11 @@ import {AppLayout, HomeWrapper, FooterNav} from '@/components'
 toast.success("Transferencia realizada con éxito");
 
 export default function Home() {
-  const { data, isLoading } = useFetchUsers()
+  const { data: user, isLoading } = useUserFromDB()
 
-  console.log(data);
+  if (isLoading) return <p>Cargando usuario...</p>
+  if (!user) return <p>Usuario no encontrado</p>
 
-  if (isLoading) return <p>Cargando...</p>
-  if (!data) return <p>No hay datos disponibles</p>
-  
   return (
     <AppLayout>
       <HomeWrapper>
@@ -24,8 +22,8 @@ export default function Home() {
         <ContactList />
         <TransactionHistory /> */}
         <div>
-          <p>{data[0].name.first} {data[0].name.last}</p>
-          <img src={data[0].picture.thumbnail} alt="avatar" />
+          <p>{user.firstName} {user.lastName}</p>
+          <img src={user.avatar} alt="avatar" />
         </div>
       </HomeWrapper>
       <FooterNav />
