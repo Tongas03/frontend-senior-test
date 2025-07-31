@@ -1,0 +1,1 @@
+export { useRandomUser } from './useRandomUser'
