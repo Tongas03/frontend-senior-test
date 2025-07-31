@@ -108,6 +108,16 @@ La aplicación sigue principios de **arquitectura limpia** y **SOLID**, aseguran
 
 ---
 
+## HomeScreen
+```
+/components
+  └── layout/
+      ├── AppLayout.tsx
+      ├── HomeWrapper.tsx
+      └── FooterNav.tsx
+```
+
+
 ## 💡 Consideraciones Extra
 
 - Código modular y reutilizable.
