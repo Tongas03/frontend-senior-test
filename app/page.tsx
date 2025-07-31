@@ -8,8 +8,8 @@ import {
   FooterNav,
   UserHeader,
   ContactList,
+  TransactionHistory
 } from "@/components";
-// import TransactionHistory from '@/components/home/TransactionHistory'
 
 toast.success("Transferencia realizada con éxito");
 
@@ -24,8 +24,7 @@ export default function Home() {
       <UserHeader />
       <HomeWrapper>
         <ContactList />
-        {/* <TransactionHistory /> */}
-        <></>
+        <TransactionHistory />
       </HomeWrapper>
       <FooterNav />
     </AppLayout>
