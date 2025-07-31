@@ -9,7 +9,11 @@ export default {
     './features/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ['var(--font-inter)', 'sans-serif'],
+      },
+    },
   },
   plugins: [forms, typography],
 }
