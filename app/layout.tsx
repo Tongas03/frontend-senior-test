@@ -1,7 +1,10 @@
 import './globals.css'
 import { Toaster } from 'react-hot-toast'
 import type { Metadata } from 'next'
-import { ReactQueryProvider } from '@/components/ReactQueryProvider'
+import { ReactQueryProvider } from '@/components'
+import { Inter } from 'next/font/google'
+
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 export const metadata: Metadata = {
   title: 'Wallet',
@@ -10,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es">
+    <html lang="es" className={inter.variable}>
       <body>
         <ReactQueryProvider>
           {children}

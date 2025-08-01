@@ -1,34 +1,25 @@
 "use client";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useFetchUsers } from '@/hooks'
+import { useUserFromDB } from "@/hooks";
 
-import {AppLayout, HomeWrapper, FooterNav} from '@/components'
-// import UserHeader from '@/components/home/UserHeader'
-// import ContactList from '@/components/home/ContactList'
-// import TransactionHistory from '@/components/home/TransactionHistory'
+import { AppLayout, HomeScreen, Loading, Error } from "@/components";
 
-toast.success("Transferencia realizada con éxito");
+// toast.success("Transferencia realizada con éxito");
 
 export default function Home() {
-  const { data, isLoading } = useFetchUsers()
+  const { data: user, isLoading } = useUserFromDB();
 
-  console.log(data);
+  const [show, setShow] = useState(false);
 
-  if (isLoading) return <p>Cargando...</p>
-  if (!data) return <p>No hay datos disponibles</p>
-  
+  useEffect(() => {
+    const timer = setTimeout(() => setShow(true), 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <AppLayout>
-      <HomeWrapper>
-        {/* <UserHeader />
-        <ContactList />
-        <TransactionHistory /> */}
-        <div>
-          <p>{data[0].name.first} {data[0].name.last}</p>
-          <img src={data[0].picture.thumbnail} alt="avatar" />
-        </div>
-      </HomeWrapper>
-      <FooterNav />
+      {!show || isLoading ? <Loading /> : !show ? <Error /> : <HomeScreen />}
     </AppLayout>
   );
 }
