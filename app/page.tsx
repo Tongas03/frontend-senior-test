@@ -1,15 +1,8 @@
 "use client";
 import toast from "react-hot-toast";
 import { useUserFromDB } from "@/hooks";
-  
-import {
-  AppLayout,
-  HomeWrapper,
-  FooterNav,
-  UserHeader,
-  ContactList,
-  TransactionHistory
-} from "@/components";
+
+import { AppLayout, HomeScreen } from "@/components";
 
 toast.success("Transferencia realizada con éxito");
 
@@ -21,12 +14,7 @@ export default function Home() {
 
   return (
     <AppLayout>
-      <UserHeader />
-      <HomeWrapper>
-        <ContactList />
-        <TransactionHistory />
-      </HomeWrapper>
-      <FooterNav />
+      <HomeScreen />
     </AppLayout>
   );
 }
