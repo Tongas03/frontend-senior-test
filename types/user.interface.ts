@@ -1,6 +1,11 @@
-export interface User {
+export interface StoredUser {
   id: string
-  name: string
+  firstName: string
+  lastName: string
+  city: string
+  state: string
+  street: string
+  email: string
+  phone: string
   avatar: string
-  balance: number
 }
