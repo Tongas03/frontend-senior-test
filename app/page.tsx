@@ -1,20 +1,32 @@
 "use client";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useUserFromDB } from "@/hooks";
 
-import { AppLayout, HomeScreen } from "@/components";
+import { AppLayout, HomeScreen, Loading, Error } from "@/components";
 
-toast.success("Transferencia realizada con éxito");
+// toast.success("Transferencia realizada con éxito");
 
 export default function Home() {
-  const { data: user, isLoading } = useUserFromDB();
+  const { data: user, isLoading } = useUserFromDB()
 
-  if (isLoading) return <p>Cargando usuario...</p>;
-  if (!user) return <p>Usuario no encontrado</p>;
+  const [show, setShow] = useState(false)
+
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShow(true), 3000)
+    return () => clearTimeout(timer)
+  }, [])
 
   return (
     <AppLayout>
-      <HomeScreen />
+      {!show || isLoading ? (
+        <Loading />
+      ) : !user ? (
+        <Error message="Usuario no encontrado" />
+      ) : (
+        <HomeScreen />
+      )}
     </AppLayout>
-  );
+  )
 }
