@@ -1,10 +1,11 @@
 import Dexie, { Table } from "dexie";
-import { StoredUser, Balance } from "@/types";
+import { StoredUser, Balance, Transfer } from "@/types";
 
 export class WalletDB extends Dexie {
   users!: Table<StoredUser>;
   contacts!: Table<StoredUser>;
   balances!: Table<Balance>;
+  transfers!: Table<Transfer>;
 
   constructor() {
     super("wallet-db");
@@ -12,6 +13,7 @@ export class WalletDB extends Dexie {
       users: "id",
       contacts: "id",
       balances: "id",
+      transfers: "id, contactId, date, amount, notes",
     });
   }
 }
