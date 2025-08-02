@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useContactsFromDB, useBalanceFromDB } from "@/hooks";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+
+import { useContactsFromDB, useBalanceFromDB } from "@/hooks";
+import { addTransferToDB } from "@/lib";
 
 interface Props {
   id: string;
@@ -24,12 +26,12 @@ export default function SendScreen({ id }: Props) {
     );
   }
 
-  // if (Number(amount) > balance) {
-  //   toast.error("No puedes enviar más de tu balance disponible.");
-  //   return;
-  // }
+  if (typeof balance === "object" && Number(amount) > balance.amount) {
+    toast.error("No puedes enviar más de tu balance disponible.");
+    return;
+  }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const value = parseFloat(amount);
@@ -40,6 +42,15 @@ export default function SendScreen({ id }: Props) {
 
     toast.success(`$${value.toFixed(2)} enviados a ${contact.firstName}`);
     router.push("/");
+
+    await addTransferToDB({
+      id: crypto.randomUUID(),
+      contactId: contact.id,
+      name: `${contact.firstName} ${contact.lastName}`,
+      date: new Date().toISOString().split("T")[0],
+      amount: value,
+      notes: note || "",
+    });
   };
 
   return (
