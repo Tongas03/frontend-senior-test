@@ -1,23 +1,35 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useContactsFromDB } from '@/hooks'
 
 export default function ContactList() {
-  const { data: contacts, isLoading } = useContactsFromDB()
+  const { data: contacts } = useContactsFromDB()
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 3000)
+    return () => clearTimeout(timer)
+  }, [])
 
   return (
     <div className="mb-6">
-      <h3 className="text-[20px] font-semibold text-center text-gray-800 mb-4">Send Again</h3>
+      <h3 className="text-[20px] font-semibold text-center text-gray-800 mb-4">
+        Send Again
+      </h3>
       <div className="flex gap-4 overflow-x-auto px-1">
-        {isLoading
+        {loading || !contacts
           ? Array.from({ length: 10 }).map((_, i) => (
-              <div key={i} className="flex flex-col items-center gap-1 animate-pulse">
+              <div
+                key={i}
+                className="flex flex-col items-center gap-1 animate-pulse"
+              >
                 <div className="w-14 h-14 rounded-full bg-gray-200" />
                 <div className="w-12 h-3 bg-gray-200 rounded" />
               </div>
             ))
-          : contacts?.map((contact) => (
+          : contacts.map((contact) => (
               <Link
                 key={contact.id}
                 href={`/send/${contact.id}`}
