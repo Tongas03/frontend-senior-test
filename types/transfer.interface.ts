@@ -12,3 +12,15 @@ export interface Transfer {
 export interface TransferWithContact extends Transfer {
   contact: StoredUser;
 }
+
+export interface TransferSummary {
+  id: string;
+  contactId: string;
+  name: string;
+  avatar: string;
+  date: string;
+  amount: number;
+  notes?: string;
+  time: string;
+  reference: string;
+}
