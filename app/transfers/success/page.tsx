@@ -2,7 +2,7 @@
 import { AppLayout } from "@/components";
 import {SuccessScreen} from "@/components";
 
-export default function TransfersPage() {
+export default function TransfersSuccessPage() {
   return (
     <AppLayout>
       <SuccessScreen />
