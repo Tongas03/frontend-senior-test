@@ -2,7 +2,7 @@
 
 import { usePaginatedTransfers } from "@/hooks/usePaginatedTransfers";
 import { useEffect, useRef } from "react";
-import { AppLayout, HomeWrapper } from "@/components";
+import { HomeWrapper } from "@/components";
 import { useRouter } from "next/navigation";
 
 export default function TransfersScreen() {
