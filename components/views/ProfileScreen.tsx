@@ -1,10 +1,10 @@
 "use client";
 
-import { getUserFromDB } from "@/lib/dbAccess";
+import { getUserFromDB } from "@/lib";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { StoredUser } from "@/types";
-import { useUIStore } from "@/stores/useUIStore";
+import { useUIStore } from "@/stores";
 
 function ProfileSkeleton() {
   return (

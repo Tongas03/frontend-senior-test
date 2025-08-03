@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { getTransfersWithContactsFromDB } from "@/lib/dbAccess";
+import { getTransfersWithContactsFromDB } from "@/lib";
 import { TransferWithContact, FiltersDates } from "@/types";
 
 const PAGE_SIZE = 6;

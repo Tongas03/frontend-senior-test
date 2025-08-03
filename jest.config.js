@@ -5,8 +5,12 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   testMatch: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
   moduleNameMapper: {
-    '^@/components/(.*)$': '<rootDir>/components/$1',
-    '^@/app/(.*)$': '<rootDir>/app/$1',
-    '^@/features/(.*)$': '<rootDir>/features/$1',
+    '^@/components$': '<rootDir>/components/index.ts',
+    '^@/hooks$': '<rootDir>/hooks/index.ts',
+    '^@/stores$': '<rootDir>/stores/index.ts',
+    '^@/types$': '<rootDir>/types/index.ts',
+    '^@/utils$': '<rootDir>/utils/index.ts',
+    '^@/lib$': '<rootDir>/lib/index.ts',
+    '^@/mocks$': '<rootDir>/mocks/index.ts',
   },
 }
