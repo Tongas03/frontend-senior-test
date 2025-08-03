@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 import { useContactsFromDB, useBalanceFromDB } from "@/hooks";
-import { addTransferToDB } from "@/lib";
+import { addTransferToDB, updateBalanceInDB } from "@/lib";
 
 interface Props {
   id: string;
@@ -26,32 +26,40 @@ export default function SendScreen({ id }: Props) {
     );
   }
 
-  if (typeof balance === "object" && Number(amount) > balance.amount) {
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  const value = parseFloat(amount);
+  if (isNaN(value) || value <= 0) {
+    toast.error("Por favor, ingrese un monto válido.");
+    return;
+  }
+
+  if (typeof balance === "object" && value > balance.amount) {
     toast.error("No puedes enviar más de tu balance disponible.");
     return;
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  //Guardar la transferencia
+  await addTransferToDB({
+    id: crypto.randomUUID(),
+    contactId: contact.id,
+    date: new Date().toISOString().split("T")[0],
+    amount: value,
+    notes: note || "",
+  });
 
-    const value = parseFloat(amount);
-    if (isNaN(value) || value <= 0) {
-      toast.error("Por favor, ingrese un monto válido.");
-      return;
-    }
+  //Actualizar balance
+  if (typeof balance === "object") {
+    const newBalance = balance.amount - value;
+    await updateBalanceInDB(newBalance);
+  }
 
-    toast.success(`$${value.toFixed(2)} enviados a ${contact.firstName}`);
-    router.push("/");
+  //Feedback y navegación
+  toast.success(`$${value.toFixed(2)} enviados a ${contact.firstName}`);
+  router.push("/");
+};
 
-    await addTransferToDB({
-      id: crypto.randomUUID(),
-      contactId: contact.id,
-      name: `${contact.firstName} ${contact.lastName}`,
-      date: new Date().toISOString().split("T")[0],
-      amount: value,
-      notes: note || "",
-    });
-  };
 
   return (
     <form

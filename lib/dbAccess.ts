@@ -1,5 +1,5 @@
 import { dbWallet } from "./dbWallet";
-import { Transfer } from "@/types";
+import { Transfer, TransferWithContact } from "@/types";
 
 export const getUserFromDB = async () => {
   const user = await dbWallet.users.toCollection().first();
@@ -16,10 +16,27 @@ export const getBalanceFromDB = async () => {
   return balance ?? { id: 1, amount: 0 };
 };
 
-export const getTransfersFromDB = async () => {
-  return await dbWallet.transfers.toArray();
+export const getTransfersFromDB = async (): Promise<TransferWithContact[]> => {
+  const transfers = await dbWallet.transfers.toArray();
+
+  const contactIds = transfers.map((transfer) => transfer.contactId);
+  const contacts = await dbWallet.contacts
+    .where("id")
+    .anyOf(contactIds)
+    .toArray();
+
+  const contactMap = new Map(contacts.map((contact) => [contact.id, contact]));
+
+  return transfers.map((transfer) => ({
+    ...transfer,
+    contact: contactMap.get(transfer.contactId)!,
+  }));
 };
 
 export const addTransferToDB = async (transfer: Transfer) => {
   return await dbWallet.transfers.add(transfer);
+};
+
+export const updateBalanceInDB = async (newAmount: number) => {
+  await dbWallet.balances.put({ id: 1, amount: newAmount });
 };

@@ -1,8 +1,13 @@
+import { StoredUser } from "@/types";
+
 export interface Transfer {
   id: string;
-  contactId: string;
-  name: string;
-  date: string; // ISO date string
+  contactId: string; // UUID del contacto
+  date: string;      // ISO string o timestamp
   amount: number;
-  notes: string;
+  notes?: string;
+}
+
+export interface TransferWithContact extends Transfer {
+  contact: StoredUser;
 }
