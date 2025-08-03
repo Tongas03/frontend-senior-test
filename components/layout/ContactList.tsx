@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useContactsFromDB } from "@/hooks";
-import { useUIStore } from "@/stores/useUIStore";
+import { useUIStore } from "@/stores";
 
 export default function ContactList() {
   const { data: contacts } = useContactsFromDB();

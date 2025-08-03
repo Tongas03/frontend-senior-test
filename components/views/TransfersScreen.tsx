@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { usePaginatedTransfers } from "@/hooks";
 import { HomeWrapper, TransactionFilterDropdown } from "@/components";
 import { FiltersDates } from "@/types";
-import { useUIStore } from "@/stores/useUIStore";
+import { useUIStore } from "@/stores";
 
 export default function TransfersScreen() {
   const router = useRouter();

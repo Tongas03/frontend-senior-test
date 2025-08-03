@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useUserFromDB } from "@/hooks";
-import { useUIStore } from "@/stores/useUIStore";
+import { useUIStore } from "@/stores";
 
 function UserHeaderSkeleton() {
   return (
