@@ -7,4 +7,5 @@ export {
   getTransfersFromDB,
   addTransferToDB,
   updateBalanceInDB,
+  getTransfersWithContactsFromDB
 } from "./dbAccess";

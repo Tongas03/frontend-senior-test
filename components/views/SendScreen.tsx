@@ -26,40 +26,40 @@ export default function SendScreen({ id }: Props) {
     );
   }
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  const value = parseFloat(amount);
-  if (isNaN(value) || value <= 0) {
-    toast.error("Por favor, ingrese un monto válido.");
-    return;
-  }
+    const value = parseFloat(amount);
+    if (isNaN(value) || value <= 0) {
+      toast.error("Por favor, ingrese un monto válido.");
+      return;
+    }
 
-  if (typeof balance === "object" && value > balance.amount) {
-    toast.error("No puedes enviar más de tu balance disponible.");
-    return;
-  }
+    if (typeof balance === "object" && value > balance.amount) {
+      toast.error("No puedes enviar más de tu balance disponible.");
+      return;
+    }
 
-  //Guardar la transferencia
-  await addTransferToDB({
-    id: crypto.randomUUID(),
-    contactId: contact.id,
-    date: new Date().toISOString().split("T")[0],
-    amount: value,
-    notes: note || "",
-  });
+    //Guardar la transferencia
+    await addTransferToDB({
+      id: crypto.randomUUID(),
+      contactId: contact.id,
+      date: new Date().toISOString().split("T")[0],
+      name: `${contact.firstName} ${contact.lastName}`,
+      amount: value,
+      notes: note || "",
+    });
 
-  //Actualizar balance
-  if (typeof balance === "object") {
-    const newBalance = balance.amount - value;
-    await updateBalanceInDB(newBalance);
-  }
+    //Actualizar balance
+    if (typeof balance === "object") {
+      const newBalance = balance.amount - value;
+      await updateBalanceInDB(newBalance);
+    }
 
-  //Feedback y navegación
-  toast.success(`$${value.toFixed(2)} enviados a ${contact.firstName}`);
-  router.push("/");
-};
-
+    //Feedback y navegación
+    toast.success(`$${value.toFixed(2)} enviados a ${contact.firstName}`);
+    router.push("/");
+  };
 
   return (
     <form
