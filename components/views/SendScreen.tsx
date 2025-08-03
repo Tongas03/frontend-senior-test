@@ -29,53 +29,55 @@ export default function SendScreen({ id }: Props) {
     );
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    const value = parseFloat(amount);
-    if (isNaN(value) || value <= 0) {
-      toast.error("Por favor, ingrese un monto válido.");
-      return;
-    }
+  const value = parseFloat(amount);
+  if (isNaN(value) || value <= 0) {
+    toast.error("Por favor, ingrese un monto válido.");
+    return;
+  }
 
-    if (typeof balance === "object" && value > balance.amount) {
-      toast.error("No puedes enviar más de tu balance disponible.");
-      return;
-    }
+  if (typeof balance === "object" && value > balance.amount) {
+    toast.error("No puedes enviar más de tu balance disponible.");
+    return;
+  }
 
-    //Guardar la transferencia
-    await addTransferToDB({
-      id: crypto.randomUUID(),
-      contactId: contact.id,
-      date: new Date().toISOString().split("T")[0],
-      name: `${contact.firstName} ${contact.lastName}`,
-      amount: value,
-      notes: note || "",
-    });
+  const now = new Date();
 
-    //Actualizar balance
-    if (typeof balance === "object") {
-      const newBalance = balance.amount - value;
-      await updateBalanceInDB(newBalance);
-    }
+  // Guardar la transferencia
+  await addTransferToDB({
+    id: crypto.randomUUID(),
+    contactId: contact.id,
+    date: now.toISOString(),
+    name: `${contact.firstName} ${contact.lastName}`,
+    amount: value,
+    notes: note || "",
+  });
 
-    const now = new Date();
-    const time = now.toTimeString().split(" ")[0].slice(0, 5);
+  // Actualizar balance
+  if (typeof balance === "object") {
+    const newBalance = balance.amount - value;
+    await updateBalanceInDB(newBalance);
+  }
 
-    setLastTransfer({
-      id: crypto.randomUUID(),
-      contactId: contact.id,
-      name: `${contact.firstName} ${contact.lastName}`,
-      avatar: contact.avatar,
-      date: now.toISOString().split("T")[0],
-      time,
-      amount: value,
-      notes: note,
-      reference: "#9999999", // opcionalmente generado
-    });
+  const time = now.toTimeString().split(" ")[0].slice(0, 5);
 
-    router.push("/transfers/success");
-  };
+  setLastTransfer({
+    id: crypto.randomUUID(),
+    contactId: contact.id,
+    name: `${contact.firstName} ${contact.lastName}`,
+    avatar: contact.avatar,
+    date: now.toISOString(),
+    time,
+    amount: value,
+    notes: note,
+    reference: "#9999999",
+  });
+
+  router.push("/transfers/success");
+};
+
 
   return (
     <form
