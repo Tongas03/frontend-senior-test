@@ -38,7 +38,9 @@ export const getTransfersWithContactsFromDB = async (): Promise<TransferWithCont
   const transfers = await dbWallet.transfers.orderBy("date").reverse().toArray();
   const contacts = await dbWallet.contacts.toArray();
 
+
   const contactMap = new Map(contacts.map((contact) => [contact.id, contact]));
+
 
   return transfers.map((transfer) => ({
     ...transfer,

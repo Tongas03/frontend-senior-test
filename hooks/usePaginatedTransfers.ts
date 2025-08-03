@@ -50,6 +50,7 @@ export const usePaginatedTransfers = (filter: FiltersDates = "All") => {
       const start = pageParam * PAGE_SIZE;
       const end = start + PAGE_SIZE;
       return filtered.slice(start, end);
+
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
@@ -57,6 +58,7 @@ export const usePaginatedTransfers = (filter: FiltersDates = "All") => {
       return lastPage.length < PAGE_SIZE
         ? undefined
         : totalLoaded / PAGE_SIZE;
+
     },
   });
 };

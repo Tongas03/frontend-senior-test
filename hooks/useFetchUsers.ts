@@ -89,6 +89,7 @@ export const useFetchUsers = () => {
             };
           });
 
+
           await dbWallet.transfers.bulkPut(mockTransfers);
         }
 

@@ -3,7 +3,9 @@ export const mockTransfers = [
     id: crypto.randomUUID(),
     contactId: 'contact-id-1',
     name: 'Lucía Gómez',
+
     date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5).toISOString(), // hace 5 días
+
     amount: 1500,
     notes: 'Alquiler',
   },
@@ -31,4 +33,5 @@ export const mockTransfers = [
     amount: 3100,
     notes: '',
   },
+
 ];

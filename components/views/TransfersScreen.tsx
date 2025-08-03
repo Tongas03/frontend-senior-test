@@ -18,6 +18,7 @@ export default function TransfersScreen() {
     isLoading,
   } = usePaginatedTransfers(filter);
 
+
   const observerRef = useRef<HTMLDivElement | null>(null);
 
   const formatDate = (dateStr: string) => {
@@ -60,11 +61,13 @@ export default function TransfersScreen() {
       </header>
 
       <HomeWrapper>
+
         <div className="flex justify-between items-center mb-4 px-2">
           <h2 className="text-lg font-semibold text-gray-800">
             Latest Transfer
           </h2>
           <TransactionFilterDropdown selected={filter} onChange={setFilter} />
+
         </div>
 
         {isLoading ? (
@@ -87,6 +90,7 @@ export default function TransfersScreen() {
           </div>
         ) : (
           <ul className="space-y-4 px-2">
+
             {data?.pages.flatMap((page) =>
               page.map((tx) => (
                 <li key={tx.id} className="flex justify-between items-center">

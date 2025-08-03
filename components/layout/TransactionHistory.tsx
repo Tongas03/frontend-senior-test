@@ -11,7 +11,7 @@ const iconMap: Record<string, string> = {
   Payment: "/iconPayment.svg",
   Transfer: "/iconTransfer.svg",
   CashIn: "/iconCashIn.svg",
-};
+}
 
 export default function TransactionHistory() {
   const [loading, setLoading] = useState(true);

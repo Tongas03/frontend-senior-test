@@ -78,7 +78,6 @@ const handleSubmit = async (e: React.FormEvent) => {
   router.push("/transfers/success");
 };
 
-
   return (
     <form
       onSubmit={handleSubmit}

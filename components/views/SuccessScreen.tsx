@@ -34,11 +34,14 @@ const handleShare = async () => {
   return (
     <div className="flex flex-col h-full justify-between text-white p-4">
       <div className="bg-white text-black rounded-2xl p-6 text-center flex flex-col items-center flex-grow">
+
         <h2 className="text-[#00C47F] font-bold text-sm">
           Transfer Successful
         </h2>
         <p className="text-xs text-gray-500 mb-4">
+
           Your transaction was successful
+
         </p>
 
         <h1 className="text-4xl text-black font-semibold my-4">
@@ -49,6 +52,7 @@ const handleShare = async () => {
           <p className="text-black font-semibold">Send to</p>
           <div className="flex items-center justify-center gap-2 mt-1">
             <img
+
               src={lastTransfer.avatar}
               className="w-10 h-10 rounded-full object-cover"
               alt="avatar"
@@ -56,6 +60,7 @@ const handleShare = async () => {
             <p className="font-medium">{lastTransfer.name}</p>
           </div>
         </div>
+
 
         <TransactionDetails transfer={lastTransfer} />
       </div>
@@ -73,6 +78,7 @@ const handleShare = async () => {
       >
         <SuccessCapture transfer={lastTransfer} />
       </div>
+
 
       <div className="mt-6 space-y-3 px-1">
         <button
@@ -140,3 +146,4 @@ function TransactionDetails({ transfer }: any) {
     </>
   );
 }
+
