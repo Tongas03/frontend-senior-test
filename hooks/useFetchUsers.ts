@@ -63,22 +63,31 @@ export const useFetchUsers = () => {
         // Mocks de transferencias si no hay datos previos
         const transfersCount = await dbWallet.transfers.count();
         if (transfersCount === 0) {
-          const today = new Date().toISOString().split("T")[0];
+          const mockTransfers = parsedUsers.slice(1, 6).map((user, i) => {
+            const daysAgo = 5 - i; // 5 días atrás hasta 1 día atrás
+            const date = new Date();
+            date.setHours(17, 30, 0, 0); // Hora fija: 17:30
+            date.setDate(date.getDate() - daysAgo);
 
-          const mockTransfers = parsedUsers.slice(1, 6).map((user, i) => ({
-            id: crypto.randomUUID(),
-            contactId: user.id,
-            name: `${user.firstName} ${user.lastName}`,
-            date: today,
-            amount: 5000 + i * 1000,
-            notes: [
-              "Pago de servicios",
-              "Cena",
-              "Regalo",
-              "Alquiler",
-              "Varios",
-            ][i],
-          }));
+            const isoDate = new Date(
+              date.getTime() - date.getTimezoneOffset() * 60000
+            ).toISOString();
+
+            return {
+              id: crypto.randomUUID(),
+              contactId: user.id,
+              name: `${user.firstName} ${user.lastName}`,
+              date: isoDate,
+              amount: 5000 + i * 1000,
+              notes: [
+                "Pago de servicios",
+                "Cena",
+                "Regalo",
+                "Alquiler",
+                "Varios",
+              ][i],
+            };
+          });
 
           await dbWallet.transfers.bulkPut(mockTransfers);
         }

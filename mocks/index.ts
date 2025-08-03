@@ -1,1 +1,2 @@
-export { mockTransactions } from './transactions'
+export { mockTransactions } from "./transactions";
+export { mockTransfers } from "./transfers";
