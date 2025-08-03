@@ -53,14 +53,40 @@ export const useFetchUsers = () => {
 
       const persist = async () => {
         await dbWallet.users.clear();
-        await dbWallet.users.add(parsedUsers[0]);
+        await dbWallet.users.put(parsedUsers[0]);
+
         await dbWallet.contacts.clear();
-        await dbWallet.contacts.bulkAdd(parsedUsers.slice(1));
+        await dbWallet.contacts.bulkPut(parsedUsers.slice(1));
+
         await dbWallet.balances.put({ id: 1, amount: 25000 });
 
-        queryClient.invalidateQueries({ queryKey: ['users-from-db'] });
-        queryClient.invalidateQueries({ queryKey: ['contacts-from-db'] });
-        queryClient.invalidateQueries({ queryKey: ['balance-from-db'] });
+        // Mocks de transferencias si no hay datos previos
+        const transfersCount = await dbWallet.transfers.count();
+        if (transfersCount === 0) {
+          const today = new Date().toISOString().split("T")[0];
+
+          const mockTransfers = parsedUsers.slice(1, 6).map((user, i) => ({
+            id: crypto.randomUUID(),
+            contactId: user.id,
+            name: `${user.firstName} ${user.lastName}`,
+            date: today,
+            amount: 5000 + i * 1000,
+            notes: [
+              "Pago de servicios",
+              "Cena",
+              "Regalo",
+              "Alquiler",
+              "Varios",
+            ][i],
+          }));
+
+          await dbWallet.transfers.bulkPut(mockTransfers);
+        }
+
+        queryClient.invalidateQueries({ queryKey: ["users-from-db"] });
+        queryClient.invalidateQueries({ queryKey: ["contacts-from-db"] });
+        queryClient.invalidateQueries({ queryKey: ["balance-from-db"] });
+        queryClient.invalidateQueries({ queryKey: ["transfers-from-db"] });
       };
 
       persist();

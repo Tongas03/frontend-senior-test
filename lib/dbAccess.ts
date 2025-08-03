@@ -1,5 +1,6 @@
 import { dbWallet } from "./dbWallet";
 import { Transfer, TransferWithContact } from "@/types";
+import { queryClient } from "@/lib";
 
 export const getUserFromDB = async () => {
   const user = await dbWallet.users.toCollection().first();
@@ -33,10 +34,23 @@ export const getTransfersFromDB = async (): Promise<TransferWithContact[]> => {
   }));
 };
 
+export const getTransfersWithContactsFromDB = async (): Promise<TransferWithContact[]> => {
+  const transfers = await dbWallet.transfers.orderBy("date").reverse().toArray();
+  const contacts = await dbWallet.contacts.toArray();
+
+  const contactMap = new Map(contacts.map((c) => [c.id, c]));
+
+  return transfers.map((transfer) => ({
+    ...transfer,
+    contact: contactMap.get(transfer.contactId)!,
+  }));
+};
+
 export const addTransferToDB = async (transfer: Transfer) => {
-  return await dbWallet.transfers.add(transfer);
+  return await dbWallet.transfers.put(transfer);
 };
 
 export const updateBalanceInDB = async (newAmount: number) => {
   await dbWallet.balances.put({ id: 1, amount: newAmount });
+  queryClient.invalidateQueries({ queryKey: ["balance-from-db"] });
 };
