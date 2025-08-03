@@ -5,8 +5,8 @@ import { getUserFromDB } from '@/lib'
 import { StoredUser } from '@/types'
 
 export function useUserFromDB() {
-  return useQuery<StoredUser | undefined>({
-    queryKey: ['user-from-db'],
+  return useQuery<StoredUser | null>({
+    queryKey: ['users-from-db'],
     queryFn: getUserFromDB,
     staleTime: Infinity,
   })
