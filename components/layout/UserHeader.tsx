@@ -6,7 +6,10 @@ import { useUIStore } from "@/stores";
 
 function UserHeaderSkeleton() {
   return (
-    <div className="px-5 pt-4 flex items-center gap-4 animate-pulse">
+    <div
+      className="px-5 pt-4 flex items-center gap-4 animate-pulse"
+      role="status"
+    >
       <div className="w-12 h-12 bg-gray-200 rounded-full" />
       <div className="h-4 w-32 bg-gray-200 rounded" />
     </div>
