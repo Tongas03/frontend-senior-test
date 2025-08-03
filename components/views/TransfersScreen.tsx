@@ -1,14 +1,23 @@
 "use client";
 
-import { usePaginatedTransfers } from "@/hooks/usePaginatedTransfers";
-import { useEffect, useRef } from "react";
-import { AppLayout, HomeWrapper } from "@/components";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { usePaginatedTransfers } from "@/hooks";
+import { HomeWrapper, TransactionFilterDropdown } from "@/components";
+import { FiltersDates } from "@/types";
 
 export default function TransfersScreen() {
   const router = useRouter();
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    usePaginatedTransfers();
+  const [filter, setFilter] = useState<FiltersDates>("All");
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = usePaginatedTransfers(filter);
+
 
   const observerRef = useRef<HTMLDivElement | null>(null);
 
@@ -52,11 +61,13 @@ export default function TransfersScreen() {
       </header>
 
       <HomeWrapper>
-        <div className="flex justify-between items-center mb-4">
+
+        <div className="flex justify-between items-center mb-4 px-2">
           <h2 className="text-lg font-semibold text-gray-800">
             Latest Transfer
           </h2>
-          <img src="/calendar.svg" alt="Filter" className="w-5 h-5" />
+          <TransactionFilterDropdown selected={filter} onChange={setFilter} />
+
         </div>
 
         {isLoading ? (
@@ -78,7 +89,8 @@ export default function TransfersScreen() {
             ))}
           </div>
         ) : (
-          <ul className="space-y-4">
+          <ul className="space-y-4 px-2">
+
             {data?.pages.flatMap((page) =>
               page.map((tx) => (
                 <li key={tx.id} className="flex justify-between items-center">

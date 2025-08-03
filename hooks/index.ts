@@ -3,3 +3,5 @@ export { useUserFromDB } from './useUserFromDB'
 export { useContactsFromDB } from './useContactsFromDB'
 export { useBalanceFromDB } from './useBalanceFromDB'
 export { useTransfersFromDB } from './useTransfersFromDB'
+export { usePaginatedTransfers } from './usePaginatedTransfers'
+
