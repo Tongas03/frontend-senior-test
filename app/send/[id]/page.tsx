@@ -1,7 +1,6 @@
 "use client";
 
-import { AppLayout, HomeWrapper } from "@/components";
-import SendScreen from "@/components/views/SendScreen";
+import { AppLayout, HomeWrapper, SendScreen } from "@/components";
 import { useParams, useRouter } from "next/navigation";
 import { useBalanceFromDB } from "@/hooks";
 

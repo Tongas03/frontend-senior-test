@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 
 import { useContactsFromDB, useBalanceFromDB } from "@/hooks";
 import { addTransferToDB, updateBalanceInDB } from "@/lib";
+import { useTransferStore } from "@/stores";
 
 interface Props {
   id: string;
@@ -19,6 +20,8 @@ export default function SendScreen({ id }: Props) {
 
   const [amount, setAmount] = useState("");
   const [note, setNote] = useState("");
+
+  const { setLastTransfer } = useTransferStore();
 
   if (!contact) {
     return (
@@ -56,9 +59,22 @@ export default function SendScreen({ id }: Props) {
       await updateBalanceInDB(newBalance);
     }
 
-    //Feedback y navegación
-    toast.success(`$${value.toFixed(2)} enviados a ${contact.firstName}`);
-    router.push("/");
+    const now = new Date();
+    const time = now.toTimeString().split(" ")[0].slice(0, 5);
+
+    setLastTransfer({
+      id: crypto.randomUUID(),
+      contactId: contact.id,
+      name: `${contact.firstName} ${contact.lastName}`,
+      avatar: contact.avatar,
+      date: now.toISOString().split("T")[0],
+      time,
+      amount: value,
+      notes: note,
+      reference: "#9999999", // opcionalmente generado
+    });
+
+    router.push("/transfers/success");
   };
 
   return (
