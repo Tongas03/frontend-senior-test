@@ -1,7 +1,8 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useUserFromDB } from "@/hooks"
+import { useEffect, useState } from "react";
+import { useUserFromDB } from "@/hooks";
+import { useUIStore } from "@/stores/useUIStore";
 
 function UserHeaderSkeleton() {
   return (
@@ -9,19 +10,26 @@ function UserHeaderSkeleton() {
       <div className="w-12 h-12 bg-gray-200 rounded-full" />
       <div className="h-4 w-32 bg-gray-200 rounded" />
     </div>
-  )
+  );
 }
 
 export default function UserHeader() {
-  const { data: user } = useUserFromDB()
-  const [loading, setLoading] = useState(true)
+  const { data: user } = useUserFromDB();
+  const hasSeen = useUIStore((s) => s.hasSeenUserHeader);
+  const markAsSeen = useUIStore((s) => s.setHasSeenUserHeader);
+  const [loading, setLoading] = useState(!hasSeen);
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 3000)
-    return () => clearTimeout(timer)
-  }, [])
+    if (!hasSeen) {
+      const timer = setTimeout(() => {
+        setLoading(false);
+        markAsSeen();
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [hasSeen, markAsSeen]);
 
-  if (loading || !user) return <UserHeaderSkeleton />
+  if (loading || !user) return <UserHeaderSkeleton />;
 
   return (
     <div className="px-5 pt-4 flex items-center gap-4">
@@ -34,5 +42,5 @@ export default function UserHeader() {
         Hola, {user.firstName} {user.lastName}
       </h2>
     </div>
-  )
+  );
 }

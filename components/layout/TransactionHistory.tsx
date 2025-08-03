@@ -3,20 +3,31 @@
 import { useEffect, useState } from "react";
 import { useTransfersFromDB } from "@/hooks";
 import { mockTransactions } from "@/mocks";
-import { Transaction, FiltersDates } from "@/types";
+import { Transaction } from "@/types";
 import { formatDates } from "@/utils";
-import {TransactionFilterDropdown} from "@/components";
+import { useUIStore } from "@/stores"
 
 const iconMap: Record<string, string> = {
   Payment: "/iconPayment.svg",
   Transfer: "/iconTransfer.svg",
   CashIn: "/iconCashIn.svg",
-}
+};
 
 export default function TransactionHistory() {
-  const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<FiltersDates>("All");
   const { data = [] } = useTransfersFromDB();
+  const hasSeen = useUIStore((state) => state.hasSeenTransactionHistory);
+  const markAsSeen = useUIStore((state) => state.setHasSeenTransactionHistory);
+  const [loading, setLoading] = useState(!hasSeen);
+
+  useEffect(() => {
+    if (!hasSeen) {
+      const timer = setTimeout(() => {
+        setLoading(false);
+        markAsSeen();
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [hasSeen, markAsSeen]);
 
   const formattedTransfers: Transaction[] = data.map((tx) => ({
     id: tx.id,
@@ -29,49 +40,16 @@ export default function TransactionHistory() {
   const unified: Transaction[] = [...mockTransactions, ...formattedTransfers];
 
   const sorted = unified.sort((a, b) => {
-    const dateA = new Date(a.date).getTime();
-    const dateB = new Date(b.date).getTime();
+    const dateA = new Date(a.date.split("·")[0].trim()).getTime();
+    const dateB = new Date(b.date.split("·")[0].trim()).getTime();
     return dateB - dateA;
   });
 
-  const filtered = sorted.filter((tx) => {
-    if (filter === "All") return true;
-
-    const txDate = new Date(tx.date);
-    const now = new Date();
-
-    if (filter === "Today") {
-      return txDate.toDateString() === now.toDateString();
-    }
-
-    if (filter === "Yesterday") {
-      const yesterday = new Date();
-      yesterday.setDate(now.getDate() - 1);
-      return txDate.toDateString() === yesterday.toDateString();
-    }
-
-    if (filter === "Last 5 Days") {
-      const fiveDaysAgo = new Date();
-      fiveDaysAgo.setDate(now.getDate() - 5);
-      return txDate >= fiveDaysAgo && txDate <= now;
-    }
-
-    return true;
-  });
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1500);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <div className="flex flex-col gap-4 pb-20">
-      <div className="flex items-center justify-between px-2 mb-2">
-        <h3 className="text-[20px] font-semibold text-gray-800">
-          Latest Transactions
-        </h3>
-        <TransactionFilterDropdown selected={filter} onChange={setFilter} />
-      </div>
+      <h3 className="text-[20px] font-semibold text-center text-gray-800 mb-2">
+        Latest Transactions
+      </h3>
 
       <ul className="flex flex-col gap-4 px-2">
         {loading
@@ -90,7 +68,7 @@ export default function TransactionHistory() {
                 <div className="w-12 h-4 bg-gray-200 rounded" />
               </li>
             ))
-          : filtered.map((tx) => (
+          : sorted.map((tx) => (
               <li key={tx.id} className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <img
