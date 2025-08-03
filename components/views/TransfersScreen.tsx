@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { usePaginatedTransfers } from "@/hooks";
 import { HomeWrapper, TransactionFilterDropdown } from "@/components";
 import { FiltersDates } from "@/types";
+import { useUIStore } from "@/stores/useUIStore";
 
 export default function TransfersScreen() {
   const router = useRouter();
@@ -15,20 +16,25 @@ export default function TransfersScreen() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    isLoading,
+    isLoading: isLoadingQuery,
   } = usePaginatedTransfers(filter);
-
 
   const observerRef = useRef<HTMLDivElement | null>(null);
 
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
+  const hasSeen = useUIStore((s) => s.hasSeenTransfersScreen);
+  const markAsSeen = useUIStore((s) => s.setHasSeenTransfersScreen);
+
+  const [loading, setLoading] = useState(!hasSeen);
+
+  useEffect(() => {
+    if (!hasSeen) {
+      const timer = setTimeout(() => {
+        setLoading(false);
+        markAsSeen();
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [hasSeen, markAsSeen]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -48,6 +54,15 @@ export default function TransfersScreen() {
     };
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
   return (
     <>
       <header className="bg-[#00C47F] text-white px-4 pt-4 pb-3 relative">
@@ -61,16 +76,14 @@ export default function TransfersScreen() {
       </header>
 
       <HomeWrapper>
-
         <div className="flex justify-between items-center mb-4 px-2">
           <h2 className="text-lg font-semibold text-gray-800">
             Latest Transfer
           </h2>
           <TransactionFilterDropdown selected={filter} onChange={setFilter} />
-
         </div>
 
-        {isLoading ? (
+        {loading || isLoadingQuery ? (
           <div className="space-y-4">
             {Array.from({ length: 5 }).map((_, i) => (
               <div
@@ -90,7 +103,6 @@ export default function TransfersScreen() {
           </div>
         ) : (
           <ul className="space-y-4 px-2">
-
             {data?.pages.flatMap((page) =>
               page.map((tx) => (
                 <li key={tx.id} className="flex justify-between items-center">
