@@ -1,25 +1,43 @@
-'use client'
+"use client";
 
-import { useQuery } from '@tanstack/react-query'
-import { useEffect } from 'react'
-import { dbWallet } from '@/lib'
-import { StoredUser } from '@/types'
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { dbWallet } from "@/lib";
+import { StoredUser } from "@/types";
 
 export const useFetchUsers = () => {
+  const queryClient = useQueryClient();
+  const [shouldFetch, setShouldFetch] = useState(false);
+
+  // Verificamos si ya hay datos en IndexedDB
+  useEffect(() => {
+    const checkDB = async () => {
+      const usersCount = await dbWallet.users.count();
+      const contactsCount = await dbWallet.contacts.count();
+
+      // Solo si NO hay datos, habilitamos el fetch
+      if (usersCount === 0 || contactsCount === 0) {
+        setShouldFetch(true);
+      }
+    };
+
+    checkDB();
+  }, []);
+
   const query = useQuery({
-    queryKey: ['initial-users'],
+    queryKey: ["initial-users"],
     queryFn: async () => {
-      const res = await fetch('https://randomuser.me/api/?results=11')
-      const data = await res.json()
-      return data.results
+      const res = await fetch("https://randomuser.me/api/?results=11");
+      const data = await res.json();
+      return data?.results ?? [];
     },
     staleTime: Infinity,
-    enabled: true,
-  })
+    enabled: shouldFetch, // solo se ejecuta si faltan datos
+  });
 
   useEffect(() => {
     if (query.data) {
-      const users = query.data
+      const users = query.data;
 
       const parsedUsers: StoredUser[] = users.map((user: any) => ({
         id: user.login.uuid,
@@ -31,13 +49,49 @@ export const useFetchUsers = () => {
         email: user.email,
         phone: user.phone,
         avatar: user.picture.medium,
-      }))
+      }));
 
-      // Persistir en IndexedDB
-      dbWallet.user.clear().then(() => dbWallet.user.add(parsedUsers[0]))
-      dbWallet.contacts.clear().then(() => dbWallet.contacts.bulkAdd(parsedUsers.slice(1)))
+      const persist = async () => {
+        await dbWallet.users.clear();
+        await dbWallet.users.put(parsedUsers[0]);
+
+        await dbWallet.contacts.clear();
+        await dbWallet.contacts.bulkPut(parsedUsers.slice(1));
+
+        await dbWallet.balances.put({ id: 1, amount: 25000 });
+
+        // Mocks de transferencias si no hay datos previos
+        const transfersCount = await dbWallet.transfers.count();
+        if (transfersCount === 0) {
+          const today = new Date().toISOString().split("T")[0];
+
+          const mockTransfers = parsedUsers.slice(1, 6).map((user, i) => ({
+            id: crypto.randomUUID(),
+            contactId: user.id,
+            name: `${user.firstName} ${user.lastName}`,
+            date: today,
+            amount: 5000 + i * 1000,
+            notes: [
+              "Pago de servicios",
+              "Cena",
+              "Regalo",
+              "Alquiler",
+              "Varios",
+            ][i],
+          }));
+
+          await dbWallet.transfers.bulkPut(mockTransfers);
+        }
+
+        queryClient.invalidateQueries({ queryKey: ["users-from-db"] });
+        queryClient.invalidateQueries({ queryKey: ["contacts-from-db"] });
+        queryClient.invalidateQueries({ queryKey: ["balance-from-db"] });
+        queryClient.invalidateQueries({ queryKey: ["transfers-from-db"] });
+      };
+
+      persist();
     }
-  }, [query.data])
+  }, [query.data]);
 
-  return query
-}
+  return query;
+};
