@@ -10,10 +10,12 @@ Este repositorio contiene el desarrollo de una **Wallet Digital**, construida co
 - [🛠️ Tecnologías Usadas](#️-tecnologías-usadas)
 - [📱 Funcionalidades Principales](#-funcionalidades-principales)
 - [🏗️ Arquitectura y Organización](#-arquitectura-y-organización)
+- [🧱 Patrón de Arquitectura](#-patrón-de-arquitectura)
 - [🚀 Instalación y Ejecución](#-instalación-y-ejecución)
 - [📡 API y Persistencia](#-api-y-persistencia)
 - [💎 Mejoras Implementadas](#-mejoras-implementadas)
 - [📂 Estructura Destacada](#-estructura-destacada)
+- [🧪 Testing](#-testing)
 - [🧑‍💻 Autor](#-autor)
 
 ---
@@ -72,7 +74,7 @@ Desarrollar la aplicación **Wallet** utilizando **React/Next.js**, replicando e
 
 ## 🏗️ Arquitectura y Organización
 
-El código sigue principios de **Clean Architecture** y **SOLID**:
+El código sigue principios de **Clean Architecture** y **SOLID**, con una estructura modular y orientada a la reutilización:
 
 ```
 /app          → App router de Next.js
@@ -86,6 +88,20 @@ El código sigue principios de **Clean Architecture** y **SOLID**:
 /utils        → Funciones de formato y utilidades
 /public       → Íconos y assets
 ```
+
+---
+
+## 🧱 Patrón de Arquitectura
+
+Este proyecto aplica una **arquitectura basada en Feature-Driven Development (FDD)** con componentes desacoplados y lógica separada en capas:
+
+- **Componentes UI**: contenidos en `components`, reutilizables y estilizados con Tailwind.
+- **Estado global**: gestionado con **Zustand** por dominio (`useTransferStore`, `useUIStore`, etc.).
+- **Lógica de negocio**: encapsulada en hooks (`usePaginatedTransfers`, `useUserFromDB`) y funciones de utilidad.
+- **Persistencia local**: implementada con **Dexie (IndexedDB)** mediante funciones en `lib`.
+- **Separación de concerns clara**: vista, estado, lógica y persistencia bien distribuidos.
+
+Este enfoque mejora la escalabilidad, facilita los tests y permite mantener una base de código limpia y mantenible.
 
 ---
 
@@ -144,6 +160,31 @@ http://localhost:3000
 /hooks/usePaginatedTransfers.ts   → Transferencias con filtro y paginado
 /pages/send/[id]/page.tsx         → Pantalla de envío
 /pages/success/page.tsx           → Pantalla de transferencia exitosa
+```
+
+---
+
+## 🧪 Testing
+
+La aplicación incluye **cobertura de pruebas** para garantizar robustez y fiabilidad en los flujos críticos:
+
+### ✅ Unit Testing (Jest)
+- Componentes probados con **React Testing Library** y **ts-jest**.
+- Mock de stores y hooks para pruebas aisladas.
+- Ubicación: `components/__tests__/`
+
+### ✅ E2E Testing (Cypress)
+- Flujo completo de transferencia probado:
+  1. Lectura de balance inicial
+  2. Ejecución de transferencia
+  3. Validación del balance actualizado
+- Archivo principal: `cypress/e2e/transfer_flow.cy.ts`
+
+### 📦 Scripts
+
+```bash
+npm run test        # Unitarios con Jest
+npm run test:e2e    # Cypress GUI para E2E
 ```
 
 ---

@@ -29,54 +29,54 @@ export default function SendScreen({ id }: Props) {
     );
   }
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  const value = parseFloat(amount);
-  if (isNaN(value) || value <= 0) {
-    toast.error("Por favor, ingrese un monto válido.");
-    return;
-  }
+    const value = parseFloat(amount);
+    if (isNaN(value) || value <= 0) {
+      toast.error("Por favor, ingrese un monto válido.");
+      return;
+    }
 
-  if (typeof balance === "object" && value > balance.amount) {
-    toast.error("No puedes enviar más de tu balance disponible.");
-    return;
-  }
+    if (typeof balance === "object" && value > balance.amount) {
+      toast.error("No puedes enviar más de tu balance disponible.");
+      return;
+    }
 
-  const now = new Date();
+    const now = new Date();
 
-  // Guardar la transferencia
-  await addTransferToDB({
-    id: crypto.randomUUID(),
-    contactId: contact.id,
-    date: now.toISOString(),
-    name: `${contact.firstName} ${contact.lastName}`,
-    amount: value,
-    notes: note || "",
-  });
+    // Guardar la transferencia
+    await addTransferToDB({
+      id: crypto.randomUUID(),
+      contactId: contact.id,
+      date: now.toISOString(),
+      name: `${contact.firstName} ${contact.lastName}`,
+      amount: value,
+      notes: note || "",
+    });
 
-  // Actualizar balance
-  if (typeof balance === "object") {
-    const newBalance = balance.amount - value;
-    await updateBalanceInDB(newBalance);
-  }
+    // Actualizar balance
+    if (typeof balance === "object") {
+      const newBalance = balance.amount - value;
+      await updateBalanceInDB(newBalance);
+    }
 
-  const time = now.toTimeString().split(" ")[0].slice(0, 5);
+    const time = now.toTimeString().split(" ")[0].slice(0, 5);
 
-  setLastTransfer({
-    id: crypto.randomUUID(),
-    contactId: contact.id,
-    name: `${contact.firstName} ${contact.lastName}`,
-    avatar: contact.avatar,
-    date: now.toISOString(),
-    time,
-    amount: value,
-    notes: note,
-    reference: "#9999999",
-  });
+    setLastTransfer({
+      id: crypto.randomUUID(),
+      contactId: contact.id,
+      name: `${contact.firstName} ${contact.lastName}`,
+      avatar: contact.avatar,
+      date: now.toISOString(),
+      time,
+      amount: value,
+      notes: note,
+      reference: "#9999999",
+    });
 
-  router.push("/transfers/success");
-};
+    router.push("/transfers/success");
+  };
 
   return (
     <form
@@ -104,6 +104,7 @@ const handleSubmit = async (e: React.FormEvent) => {
               Set Amount
             </label>
             <input
+              name="amount"
               type="number"
               step="0.01"
               inputMode="decimal"
@@ -115,11 +116,12 @@ const handleSubmit = async (e: React.FormEvent) => {
           </div>
 
           <div className="w-full max-w-xs text-left">
-            <label htmlFor="note" className="block mb-1 text-sm font-medium">
+            <label htmlFor="notes" className="block mb-1 text-sm font-medium">
               Notes
             </label>
             <textarea
-              id="note"
+              id="notes"
+              name="notes"
               rows={3}
               value={note}
               onChange={(e) => setNote(e.target.value)}
