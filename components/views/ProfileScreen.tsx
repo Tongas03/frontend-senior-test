@@ -1,25 +1,67 @@
 "use client";
 
-import { getUserFromDB } from "@/lib/dbAccess";
+import { getUserFromDB } from "@/lib";
 import { useEffect, useState } from "react";
-import { AppLayout } from "@/components";
 import { useRouter } from "next/navigation";
 import { StoredUser } from "@/types";
+import { useUIStore } from "@/stores";
+
+function ProfileSkeleton() {
+  return (
+    <>
+      <header className="text-white px-4 pt-4 pb-3 relative">
+        <div className="absolute left-4 top-4 text-2xl">←</div>
+        <h1 className="text-center font-bold text-lg">Profile</h1>
+      </header>
+
+      <div className="bg-white rounded-t-2xl px-4 py-6 min-h-[calc(100vh-160px)] flex flex-col items-center relative text-black">
+        <div className="w-36 h-36 rounded-full bg-gray-200 mb-4 mt-2" />
+        <div className="h-5 w-40 bg-gray-300 rounded mb-6" />
+        <div className="space-y-3 w-full px-2">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div className="flex justify-between" key={i}>
+              <div className="w-20 h-3 bg-gray-200 rounded" />
+              <div className="w-28 h-3 bg-gray-300 rounded" />
+            </div>
+          ))}
+        </div>
+        <div className="absolute bottom-0 left-0 w-full px-4 pb-4">
+          <div className="h-3 w-48 bg-gray-200 rounded mx-auto" />
+        </div>
+      </div>
+    </>
+  );
+}
 
 export default function ProfileScreen() {
   const [user, setUser] = useState<StoredUser | null>(null);
   const router = useRouter();
 
-  useEffect(() => {
-    getUserFromDB().then(setUser);
-  }, []);
+  const hasSeen = useUIStore((s) => s.hasSeenProfileScreen);
+  const markAsSeen = useUIStore((s) => s.setHasSeenProfileScreen);
 
-  if (!user) return null;
+  const [loading, setLoading] = useState(!hasSeen);
+
+  useEffect(() => {
+    getUserFromDB().then((u) => {
+      setUser(u);
+      if (!hasSeen) {
+        setTimeout(() => {
+          setLoading(false);
+          markAsSeen();
+        }, 1500);
+      }
+    });
+  }, [hasSeen, markAsSeen]);
+
+  if (!user || loading) return <ProfileSkeleton />;
 
   return (
     <>
       <header className="bg-[#00C47F] text-white px-4 pt-4 pb-3 relative">
-        <button onClick={() => router.back()} className="absolute left-4 top-4 text-2xl">←</button>
+        <button onClick={() => router.back()} className="absolute left-4 top-4 text-2xl">
+          ←
+        </button>
         <h1 className="text-center font-bold text-lg">Profile</h1>
       </header>
 

@@ -1,17 +1,26 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { useContactsFromDB } from '@/hooks'
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useContactsFromDB } from "@/hooks";
+import { useUIStore } from "@/stores";
 
 export default function ContactList() {
-  const { data: contacts } = useContactsFromDB()
-  const [loading, setLoading] = useState(true)
+  const { data: contacts } = useContactsFromDB();
+  const hasSeen = useUIStore((s) => s.hasSeenContacts);
+  const markAsSeen = useUIStore((s) => s.setHasSeenContacts);
+
+  const [loading, setLoading] = useState(!hasSeen);
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 3000)
-    return () => clearTimeout(timer)
-  }, [])
+    if (!hasSeen) {
+      const timer = setTimeout(() => {
+        setLoading(false);
+        markAsSeen();
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [hasSeen, markAsSeen]);
 
   return (
     <div className="mb-6">
@@ -47,5 +56,5 @@ export default function ContactList() {
             ))}
       </div>
     </div>
-  )
+  );
 }

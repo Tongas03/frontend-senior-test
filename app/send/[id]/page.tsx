@@ -18,12 +18,14 @@ export default function SendPage() {
         <h1 className="text-lg font-bold absolute left-1/2 -translate-x-1/2">
           Send Again
         </h1>
-        <div className="w-6" /> {/* Spacer para simetría */}
+        <div className="w-6" />
       </header>
 
       <div className="text-white text-center mb-4">
         <p className="text-sm">Your balance</p>
-        <p className="text-2xl font-bold">${balance?.amount.toLocaleString()}</p>
+        <p className="text-2xl font-bold" data-testid="user-balance">
+          ${balance?.amount.toLocaleString()}
+        </p>
       </div>
 
       <HomeWrapper>
